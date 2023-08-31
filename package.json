@@ -1,5 +1,5 @@
 {
-  "name": "@framble/nodejs",
+  "name": "uzor-app-nodejs",
   "version": "16.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -15,16 +15,8 @@
     "release:minor": "npm version $(semver $npm_package_version -i minor) && npm publish --tag latest",
     "release:patch": "npm version $(semver $npm_package_version -i patch) && npm publish --tag latest"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@bitbucket.org/framble-workspace/framble-nodejs.git"
-  },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://bitbucket.org/framble-workspace/framble-nodejs/issues"
-  },
-  "homepage": "https://bitbucket.org/framble-workspace/framble-nodejs#readme",
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.359.0",
     "@segment/analytics-node": "^1.1.0",
