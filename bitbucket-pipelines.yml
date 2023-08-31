@@ -1,0 +1,23 @@
+image: node:18
+
+options:
+  size: 2x
+
+pipelines:
+  branches:
+    master:
+      - step:
+          name: Publish package
+          runs-on:
+            - self.hosted
+            - linux
+          script:
+            - npm set registry http://13.40.50.74:4873/
+            - npm install
+            - npm run build
+            - npm run release:minor
+
+definitions:
+  services:
+    docker:
+      memory: 4096
