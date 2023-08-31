@@ -1,28 +1,37 @@
-# @framble/nodejs
+## What?
+With this project you can quickly setup an express server with;
+- HTTP handlers
+- SQS queue handlers
+- CronJob handlers
 
-A package to help you with nodejs projects. With this package you can setup an Express server. It allows you to;
-* It can be used to quickly setup APIs
-* Setup consumers for SQS queues.
-
-### Usage
-Install the package
-```bash
-npm install @framble/nodejs
-```
-
-Create a file called `server.ts` and add the following code:
+## Usage
+In your main entry file, add the following code:
 ```ts
-import { App } from '@framble/nodejs';
-import { HttpHandler } from '../../../src/express-app/core/http-handler';
-import { Request, Response } from 'express';
+import { App, HttpRequestHandlerV2 } from 'uzor-app-nodejs';
+import { SQSClient } from '@aws-sdk/client-sqs';
+import * as express from 'express';
 
 /**
  * Example of a HTTP handler
  */
-class HelloWorld extends HttpRequestHandler<void> {
-  execute(req: express.Request, res: express.Response): Promise<void> {
-    res.send('Hello World');
+class HealthCheck extends HttpRequestHandlerV2<any> {
+  async execute(): Promise<any> {
+    this.logger.info('Health check triggered!');
+
+    this.res.status(200).json({
+      message: 'Hello world',
+      date: new Date(),
+    });
   }
+}
+
+/**
+ * Example SQS queue handler
+ */
+export class HelloWorld extends SqsMessageHandlerV2<void> {
+  async execute(message: {name: string}): Promise<void> {
+    this.logger.info('Hello world triggered!');
+  }  
 }
 
 /**
@@ -33,23 +42,23 @@ App.start({
   stage: 'local',
   httpRoutes: [
     {
-      path: '/example',
+      path: '/health-check',
       method: 'GET',
-      handler: ExampleHttpHandler,
+      handler: HealthCheck,
     },
   ],
   sqsQueueRoutes: [
     {
       queueUrl: 'https://example.com',
       deadLetterQueueUrl: 'https://example.com',
-      cronInterval: '*/10 * * * * *',
-      handler: ExampleSqsHandler,
+      cronInterval: '*/10 * * * * *', // queue is polled at interval
+      handler: HelloWorld,
     },
   ],
-})
+}, express(), new SQSClient({}))
 ```
 
 ## Why?
 I created this package to help me with my projects. I was tired of creating the same thing over and over again across different projects and having to maintain them across all microservices when I needed to make a change. 
 
-This package is a work in progress and I will be adding more features as I need them.
+This package is a work in progress and I will be adding more features as I need be.
